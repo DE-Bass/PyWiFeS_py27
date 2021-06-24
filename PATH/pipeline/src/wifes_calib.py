@@ -823,7 +823,6 @@ def derive_wifes_telluric(cube_fn_list,
         fit_inds = numpy.nonzero(O2_mask*H2O_mask
                                  *(obs_wave >= fit_wmin)
                                  *(obs_wave <= fit_wmax)*~numpy.isnan(obs_flux))[0]
-        print(fit_inds)
         smooth_poly = numpy.polyfit(obs_wave[fit_inds],
                                     obs_flux[fit_inds],
                                     polydeg)
