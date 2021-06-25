@@ -819,9 +819,10 @@ def derive_wifes_telluric(cube_fn_list,
         O2_inds  = numpy.nonzero(O2_mask==0)[0]
         H2O_inds = numpy.nonzero(H2O_mask==0)[0]
         # fit smooth polynomial to non-telluric regions!
+        # CLi - filter out NaNs
         fit_inds = numpy.nonzero(O2_mask*H2O_mask
                                  *(obs_wave >= fit_wmin)
-                                 *(obs_wave <= fit_wmax))[0]
+                                 *(obs_wave <= fit_wmax)*~numpy.isnan(obs_flux))[0]
         smooth_poly = numpy.polyfit(obs_wave[fit_inds],
                                     obs_flux[fit_inds],
                                     polydeg)
