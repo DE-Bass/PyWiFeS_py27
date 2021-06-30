@@ -1,0 +1,25 @@
+--- activate	2021-06-29 23:06:43.166852783 +1000
++++ temp	2021-06-29 23:06:24.493519817 +1000
+@@ -14,6 +14,10 @@
+         unset _OLD_VIRTUAL_PYTHONHOME
+     fi
+ 
++    PYTHONPATH=${_OLD_PYTHONPATH}
++    export PYTHONPATH
++    unset _OLD_PYTHONPATH
++
+     # This should detect bash and zsh, which have a hash command that must
+     # be called to get it to forget past commands.  Without forgetting
+     # past commands the $PATH changes we made may not be respected
+@@ -44,6 +48,11 @@
+ PATH="$VIRTUAL_ENV/bin:$PATH"
+ export PATH
+ 
++_OLD_PYTHONPATH=${PYTHONPATH}
++activate_fullpath="$(dirname "$(realpath $0)")"
++pipeline_fullpath="$(echo "${activate_fullpath}" | rev | cut -d '/' -f 3- | rev)/pipeline"
++export PYTHONPATH="$(find ${pipeline_fullpath} -type d -name "src" -o -name "reduction_scripts" | tr '\n' ':' | sed 's/.$//')"
++
+ # unset PYTHONHOME if set
+ # this will fail if PYTHONHOME is set to the empty string (which is bad anyway)
+ # could use `if (set -u; : $PYTHONHOME) ;` in bash
