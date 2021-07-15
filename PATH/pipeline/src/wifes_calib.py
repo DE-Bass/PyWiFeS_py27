@@ -280,7 +280,7 @@ def extract_wifes_stdstar(cube_fn,
             header=out_header)
         outfits = pyfits.HDUList([out_hdu])
         outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-        outfits.writeto(save_fn, clobber=True)
+        outfits.writeto(save_fn, overwrite=True)
         f.close()
     else:
         f.close()
@@ -314,7 +314,7 @@ def wifes_cube_divide(inimg, outimg,
         outfits[i].data = out_flux
         outfits[i+25].data = out_var
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f3.close()
     return
 
@@ -510,6 +510,8 @@ def derive_wifes_calibration(cube_fn_list,
             wave_min = numpy.min(obs_wave)
         if wave_max == None:
             wave_max = numpy.max(obs_wave)
+
+
         # get reference data
         ref_data = numpy.loadtxt(os.path.join(ref_dir,ref_fname))
         ref_interp = scipy.interpolate.interp1d(
@@ -764,7 +766,7 @@ def calibrate_wifes_cube(inimg, outimg,
         outfits[i].data = out_flux
         outfits[i+25].data = out_var
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f3.close()
     return  
 
@@ -987,7 +989,7 @@ def apply_wifes_telluric(inimg,
         outfits[i].data = out_flux
         outfits[i+25].data = out_var
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f3.close()
     return
 
