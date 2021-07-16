@@ -150,7 +150,7 @@ def imcombine(inimg_list, outimg,
             numpy.mean(numpy.array(airmass_list)))
     # (5) write to outfile!
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     gc.collect()
     return
 
@@ -243,7 +243,7 @@ def imcombine_mef(inimg_list, outimg,
     # (5) write to outfile!
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
     outfits[1].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f.close()
     gc.collect()
     return
@@ -319,7 +319,7 @@ def imarith_mef(inimg1, operator, inimg2, outimg):
         gc.collect()
     # (5) write to outfile!
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     f2.close()
     gc.collect()
@@ -396,7 +396,7 @@ def scaled_imarith_mef(inimg1, operator, inimg2, outimg,
         outfits[dq_hdu].data = op_dq
     # (5) write to outfile!
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     f2.close()
     return
@@ -420,7 +420,7 @@ def imarith(inimg1, operator, inimg2, outimg, data_hdu=0):
         raise ValueError
     outfits[data_hdu].data = op_data
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     f2.close()
     return
@@ -481,7 +481,7 @@ def imarith_float_mef(inimg1, operator, scale, outimg):
         outfits[dq_hdu].data = op_dq
     # (5) write to outfile!
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     return
 
@@ -494,7 +494,7 @@ def imarith_float(inimg1, operator, scale, outimg, data_hdu=0):
 def imcopy(inimg, outimg):
     f = pyfits.open(inimg)
     outfits = pyfits.HDUList(f)
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f.close()
     return
 
@@ -736,7 +736,7 @@ def subtract_overscan(inimg, outimg,
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
     outfits[data_hdu].data = subbed_data
     # (5) write to outfile!
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     return
 
 #------------------------------------------------------------------------
@@ -775,7 +775,7 @@ def repair_blue_bad_pix(inimg, outimg,
                                     interp_data[i,x_bad+1])
     # save it!
     outfits[data_hdu].data = interp_data
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     return
 
 def repair_red_bad_pix(inimg, outimg,
@@ -815,7 +815,7 @@ def repair_red_bad_pix(inimg, outimg,
                                   2.0*interp_data[i,x_bad_2+1])/3.0
     # save it!
     outfits[data_hdu].data = interp_data
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     return
 
 #------------------------------------------------------------------------
@@ -1018,7 +1018,7 @@ def save_wifes_interslit_bias(inimg, outimg,
     # (2) save it!
     outfits[data_hdu].data = out_data
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f.close()
     return
 
@@ -1044,7 +1044,7 @@ def subtract_wifes_interslit_bias(inimg, outimg,
     # (2) save it!
     outfits[data_hdu].data = orig_data - out_data
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     return
 
 #------------------------------------------------------------------------
@@ -1234,7 +1234,7 @@ def generate_wifes_bias_fit(bias_img, outimg, data_hdu=0,
     outfits = pyfits.HDUList(f1)
     outfits[data_hdu].data = out_data
     outfits[data_hdu].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     return
 
@@ -1498,10 +1498,10 @@ def interslice_cleanup(input_fn, output_fn,
     # 7) All done ! Let's save it all ...
     f = pyfits.open(input_fn)
     f[0].data = fitted
-    f.writeto(input_fn[:-5]+'_corr.fits',clobber=True) # Save the corretion image separately just in case
+    f.writeto(input_fn[:-5]+'_corr.fits',overwrite=True) # Save the corretion image separately just in case
     f[0].data = data - fitted + offset*numpy.mean(fitted)
     f[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    f.writeto(output_fn,clobber=True)
+    f.writeto(output_fn,overwrite=True)
     f.close()
     if verbose:    
         print ' Additive offset:',offset*numpy.mean(fitted)
@@ -1719,7 +1719,7 @@ def wifes_slitlet_mef(inimg, outimg, data_hdu=0,
         outfits.append(new_hdu)
         gc.collect()
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     return
 
 def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
@@ -1992,8 +1992,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
     #------------------------------------
     outfits_obj[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
     outfits_sky[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits_obj.writeto(outimg_obj, clobber=True)
-    outfits_sky.writeto(outimg_sky, clobber=True)
+    outfits_obj.writeto(outimg_obj, overwrite=True)
+    outfits_sky.writeto(outimg_sky, overwrite=True)
     return
 
 #------------------------------------------------------------------------
@@ -2036,7 +2036,7 @@ def wifes_response_pixel(inimg, outimg, wsol_fn = None):
         outfits[curr_hdu].data = normed_data
         # need to fit this for each slitlet
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f.close()
     return
 
@@ -2127,7 +2127,7 @@ def wifes_response_poly(inimg, outimg,
             outfits[var_hdu].data *= 0.0
         # need to fit this for each slitlet
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f.close()
     return
 
@@ -2321,7 +2321,7 @@ def wifes_2dim_response(spec_inimg,
             outfits[var_hdu].data *= 0.0
         # need to fit this for each slitlet
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     f2.close()
     #---------------------------------------------
@@ -2435,7 +2435,7 @@ def wifes_illumination(spatial_inimg,
             outfits[var_hdu].data *= 0.0
         # need to fit this for each slitlet
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f1.close()
     f2.close()
     return
@@ -2574,7 +2574,7 @@ def derive_wifes_wire_solution(inimg, out_file,
     results = pyfits.PrimaryHDU(data = ctr_results)
     g = pyfits.HDUList([results])
     g[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    g.writeto(out_file, clobber=True)
+    g.writeto(out_file, overwrite=True)
     return
 
 #-------------------------------------------------------------
@@ -2868,7 +2868,7 @@ def generate_wifes_cube_oneproc(
         outfits[i+50].data = dq_data_cube_tmp[i-1,:,:]
         #outfits[i].header.set('NAXIS1', len(out_lambda))
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f3.close()
     return 
 
@@ -2888,7 +2888,7 @@ def save_wifes_cube_single_thread(
     outfits = pyfits.HDUList([pyfits.PrimaryHDU(data = interp_flux,
                                                 header = hdr)])
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(out_fn, clobber=True)
+    outfits.writeto(out_fn, overwrite=True)
     return
 
 def generate_wifes_cube_multithread(
@@ -3197,7 +3197,7 @@ def generate_wifes_cube_multithread(
         outfits[i+50].data = dq_data_cube_tmp[i-1,:,:]
         #outfits[i].header.set('NAXIS1', len(out_lambda))
     outfits[0].header.set('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(outimg, clobber=True)
+    outfits.writeto(outimg, overwrite=True)
     f3.close()
     return    
 

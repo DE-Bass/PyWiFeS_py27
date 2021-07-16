@@ -1116,7 +1116,7 @@ def derive_wifes_polynomial_wave_solution(inimg,
         new_hdu = pyfits.ImageHDU(wave_data, arc_hdr, name=hdu_name)
         outfits.append(new_hdu)
     outfits[0].header.update('PYWIFES', __version__, 'PyWiFeS version')
-    outfits.writeto(out_file, clobber=True)
+    outfits.writeto(out_file, overwrite=True)
     a.close()
     return
 
