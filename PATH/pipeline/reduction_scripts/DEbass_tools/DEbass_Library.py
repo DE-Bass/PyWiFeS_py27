@@ -28,5 +28,12 @@ def getObsDateDirName(inputFile):
 
     return dirName
 
+def getObsDate(inputFile):
+    dirName="%s" % (inputFile[7:15])
 
-    
+    return dirName
+
+def getPipelineVersion():
+    pipelineDir='%s/current' % (os.environ['DEBASSPIPLINE'])
+
+    return os.readlink(pipelineDir)

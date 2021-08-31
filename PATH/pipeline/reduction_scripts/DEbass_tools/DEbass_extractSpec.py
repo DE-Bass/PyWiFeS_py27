@@ -106,7 +106,7 @@ def select_spaxel(data, rect=None, width=1, height=1, title=''):
 	return x,y
 
 
-def calcFlux(sci, var, obj_x, obj_y, sub_x, sub_y):
+def calcFlux(sci, var, obj_x, obj_y, sub_x, sub_y, skySub):
     '''
     Takes in user selected range of spaxels and averages flux for each spaxel per wavelength.
     Subtracts spaxels in another user selected region for sky/host subtraction
@@ -137,21 +137,31 @@ def calcFlux(sci, var, obj_x, obj_y, sub_x, sub_y):
     obj_var = var[:, obj_y['start']:obj_y['end'], obj_x['start']:obj_x['end']]
 
     #Extracts average spectrum in section to subtract
-    sub_sci  = sci[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
-    sub_var  = var[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
+    if skySub:
+        sub_sci  = sci[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
+        sub_var  = var[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
 
     #Calculates the weighted average spectrum across selection range
-    fl = [
+        
+        fl = [
             np.average(obj_sci[i], weights=np.reciprocal(obj_var[i])) - 
             np.average(sub_sci[i], weights=np.reciprocal(sub_var[i])) 
             for i in range(obj_sci.shape[0])
-        ]
+            ]
+
+    else:
+
+        fl = [
+            np.average(obj_sci[i], weights=np.reciprocal(obj_var[i]))
+            for i in range(obj_sci.shape[0])
+            ]
+
 
     area=(obj_y['end']-obj_y['start'])*(obj_x['end']-obj_x['start'])
     
     return np.array(fl) * area
 
-def calcVar(var, obj_x, obj_y, sub_x, sub_y):
+def calcVar(var, obj_x, obj_y, sub_x, sub_y, skySub):
     '''
     Calculates variance in flux values across selected region
 
@@ -173,17 +183,20 @@ def calcVar(var, obj_x, obj_y, sub_x, sub_y):
     '''
     #Cut out relevant regions
     obj_var = var[:, obj_y['start']:obj_y['end'], obj_x['start']:obj_x['end']]
-    sub_var  = var[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
-
-    #Calculate standard error of weighted mean
     obj_err = np.reciprocal(np.sum(np.reciprocal(obj_var), axis=(1,2)))
-    sub_err = np.reciprocal(np.sum(np.reciprocal(sub_var), axis=(1,2)))
+
+    if skySub:
+        sub_var  = var[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
+        sub_err = np.reciprocal(np.sum(np.reciprocal(sub_var), axis=(1,2)))
 
     #Add errors of two sections and multiply by the area
 
     area=(obj_y['end']-obj_y['start'])*(obj_x['end']-obj_x['start'])
 
-    return (obj_err + sub_err) * area
+    if skySub:
+        return (obj_err + sub_err) * area
+    else:
+        return obj_err * area
 
 def writeFITS(sci,var,output,sci_header,var_header):
 
@@ -225,19 +238,23 @@ def main(args):
 
     obj_x, obj_y = select_spaxel(ave_image, title='Select Object spaxels to coadd',)
 
-    
-    sub_x, sub_y = select_spaxel(ave_image, title='Select sky spaxels to subtract',
-                                rect  = (obj_x['start'], obj_y['start']),
-                                width =  obj_x['end']-obj_x['start'],
-                                height=  obj_y['end']-obj_y['start'],
-                                )
+
+    if args.skySub:
+        sub_x, sub_y = select_spaxel(ave_image, title='Select sky spaxels to subtract',
+                                     rect  = (obj_x['start'], obj_y['start']),
+                                     width =  obj_x['end']-obj_x['start'],
+                                     height=  obj_y['end']-obj_y['start'],
+                                     )
+    else:
+        sub_x=None
+        sub_y=None
 
     # Calculate spectrum for selected values
-    b_fl = calcFlux(b_sci, b_var, obj_x, obj_y, sub_x, sub_y)
-    b_var= calcVar(b_var, obj_x, obj_y, sub_x, sub_y)
+    b_fl = calcFlux(b_sci, b_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
+    b_var= calcVar(b_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
 
-    r_fl = calcFlux(r_sci, r_var, obj_x, obj_y, sub_x, sub_y)
-    r_var= calcVar(r_var, obj_x, obj_y, sub_x, sub_y)
+    r_fl = calcFlux(r_sci, r_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
+    r_var= calcVar(r_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
 
 
     # Write out the results
@@ -267,7 +284,22 @@ if __name__ == "__main__":
                         default=None,
                         help='Pre-defined aperture')
 
+    parser.add_argument('--skySub', dest='skySub',
+                        default=False, action='store_true',
+                        help='Subtract Sky')
     
     args = parser.parse_args()
+
+    # Need to add some error checking
+    # Note that the filenames for the red and blue arms can differ by a second
+
+    if args.redArm is None:
+        args.redArm="reduc_r/%s" % (args.blueArm.replace('T2m3wb','T2m3wr'))
+    else:
+        args.redArm="reduc_r/%s" % (args.redArm)
+
+
+    args.blueArm="reduc_b/%s" % (args.blueArm)
+
 
     main(args)

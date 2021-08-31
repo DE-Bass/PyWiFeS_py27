@@ -211,13 +211,15 @@ def main(args):
     blueSpec=SingleSpec(args.blueArm)
     redSpec=SingleSpec(args.redArm)
 
-    
     # Join the spectra
     flux, fluxVar = joinSpectra(blueSpec, redSpec, args)
     
-    # Write out the results - temporary
+    # Write out the results
+    # Use the header in red arm to start with 
+    # Add additional blue CCD keywords as required - pending
     hdulist=fits.HDUList(fits.PrimaryHDU())
     hdulist[0].data=flux
+    hdulist[0].header=redSpec.header
     hdulist[0].header['CRPIX1']=blueSpec.header['CRPIX1']
     hdulist[0].header['CRVAL1']=blueSpec.header['CRVAL1']
     hdulist[0].header['CDELT1']=blueSpec.header['CDELT1']
@@ -271,6 +273,15 @@ if __name__ == "__main__":
                         help='Scale spectra')
 
     args = parser.parse_args()
+
+    # Need to add some error checking
+
+    if args.redArm is None:
+        args.redArm="reduc_r/%s" % (args.blueArm.replace('T2m3wb','T2m3wr'))
+    else:
+        args.redArm="reduc_r/%s" % (args.redArm)
+
+    args.blueArm="reduc_b/%s" % (args.blueArm)
 
     main(args)
 
