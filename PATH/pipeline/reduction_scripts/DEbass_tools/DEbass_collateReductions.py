@@ -4,6 +4,12 @@ import DEbass_Library as DEbass
 import argparse
 import os
 import shutil as sh
+import astropy.io.fits as fits
+
+def checkObjectName(obsFile,obj):
+    if fits.getval(obsFile,'OBJECT',0) != obj:
+        print("WARNING: Object name mismatch - %s vs %s" % (fits.getval(obsFile,'OBJECT',0),obj))
+    return
 
 def main(args):
 
@@ -21,6 +27,7 @@ def main(args):
     ObsPathReducedDir="%s/%s" % (SNpathReducedDir,obsDateDirName)
 
     # Retrieve the pipeline version and metadata version numbers
+    # This is fragile. The code will fail if it is run from the wrong directory
     cwd=os.getcwd()
     if args.metadataVersion is None:
         metaDataVersion=cwd[-3:]
@@ -31,7 +38,7 @@ def main(args):
     else:
         pipelineVersion=args.pipelineVersion
         
-    print(metaDataVersion,pipelineVersion)
+#    print(metaDataVersion,pipelineVersion)
 
 
     # Create the data structure
@@ -45,24 +52,37 @@ def main(args):
     origin="%s/%s/%s" % (ObsPathWorkingDir,pipelineVersion,metaDataVersion)
     destination="%s/%s/%s" % (ObsPathReducedDir,pipelineVersion,metaDataVersion)
 
-
-    # Copy accross reduced data
-    # If the red arm is not set, we assume that it has the same filename strucure as the blue arm
-    if args.redArm is not None:
-        sh.copy(src="%s/reduc_r/%s" % \
-                (origin,args.redArm), dst=destination)
-        sh.copy(src="%s/reduc_b/%s" % \
-                (origin,args.blueArm), dst=destination)
-    else:
-        sh.copy(src="%s/reduc_b/%s" % \
-                    (origin,args.blueArm), dst=destination)
-        sh.copy(src="%s/reduc_r/%s" % \
-                    (origin,args.blueArm.replace('T2m3wb','T2m3wr')), dst=destination)
     
-    # Copy accross the extracted and spliced data
-    sh.copy(src="%s/reduc_s/%s" % \
-                (origin,args.blueArm.replace('p11','p12').replace('T2m3wb','T2m3ws')), dst=destination)
+    # Copy accross reduced data
+    # If the red arm is not set, we assume that it has the same filename structure as the blue arm
+    
+    if args.redArm is not None:
+        inputRed="%s/reduc_r/%s" % (origin,args.redArm)
+        inputBlue="%s/reduc_b/%s" % (origin,args.blueArm)
+        sh.copy(src=inputRed, dst=destination)
+        sh.copy(src=inputBlue, dst=destination)
+    else:
+        inputRed="%s/reduc_r/%s" % (origin,args.blueArm.replace('T2m3wb','T2m3wr'))
+        inputBlue="%s/reduc_b/%s" % (origin,args.blueArm)
+        sh.copy(src=inputBlue, dst=destination)
+        sh.copy(src=inputRed, dst=destination)
 
+    # We check that the Object name in the FITS header matches the Object name used in the command line
+    # If they differ, we issue warning.
+    # In v02 of the pipeline, we'll ensure that the correct name is included in the p11 file.
+    checkObjectName(inputRed,args.SNname)
+    checkObjectName(inputBlue,args.SNname)
+    
+    # Copy across the extracted and spliced data
+    # The extracted and spliced data will have the form *p12_ID.fits where ID could be anything, but is generally SN, host, AGN or nothing
+    # Search for all files containing the string args.blueArm
+
+    stub = args.blueArm.replace('T2m3wb','T2m3ws').replace('.p11.fits','')
+    dirContents=os.listdir("%s/reduc_s" % origin)
+    for f in dirContents:
+        if stub in f:
+            sh.copy(src="%s/reduc_s/%s" % \
+                    (origin,f), dst=destination)
 
     # Metadata
     sh.copy(src="%s/raw_data/save_blue_metadata.py" % (origin), dst=destination)

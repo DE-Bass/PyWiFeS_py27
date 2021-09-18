@@ -259,8 +259,10 @@ def main(args):
 
     # Write out the results
 
-    blueOutput=args.blueArm.replace('p11.fits','p12.fits')
-    redOutput=args.redArm.replace('p11.fits','p12.fits')
+    blueOutput=args.blueArm.replace('p11.fits','p12_%s.fits' % (args.suffix))
+    redOutput=args.redArm.replace('p11.fits','p12_%s.fits' % (args.suffix))
+
+    print(blueOutput) 
     
     writeFITS(b_fl,b_var,blueOutput,b_sci_hdr,b_var_hdr)
     writeFITS(r_fl,r_var,redOutput,r_sci_hdr,r_var_hdr)
@@ -279,6 +281,10 @@ if __name__ == "__main__":
     parser.add_argument('--blueArm', dest='blueArm',
                         default=None,
                         help='Red arm of WiFeS')
+
+    parser.add_argument('--suffix', dest='suffix',
+                        default='SN',
+                        help='Suffix')
 
     parser.add_argument('--aperture', dest='aperture',
                         default=None,
