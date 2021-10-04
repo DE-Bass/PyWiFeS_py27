@@ -1,5 +1,6 @@
 # A library of useful code for DEbass
 import os
+import time
 
 months={"01":"Jan",
         "02":"Feb",
@@ -13,6 +14,9 @@ months={"01":"Jan",
         "10":"Oct",
         "11":"Nov",
         "12":"Dec"}
+
+reducers={"clidman":"C. Lidman"}
+
 
 def makeDir(dir):
     try:
@@ -34,6 +38,23 @@ def getObsDate(inputFile):
     return dirName
 
 def getPipelineVersion():
-    pipelineDir='%s/current' % (os.environ['DEBASSPIPLINE'])
+    pipelineDir='%s/current' % (os.environ['DEBASSPIPELINE'])
 
     return os.readlink(pipelineDir)
+
+def getMetadataVersion():
+    # Assumes that one is in the correct directory
+    metaDataVersion=os.getcwd()[-3:]
+    rawInput=raw_input("Enter the metaData version if it is not %s, otherwise hit return " % metaDataVersion)
+    if rawInput != '':
+        return rawInput
+    else:
+        return metaDataVersion
+
+def setName():
+    #Sets the observer name based on the user name
+    user=os.path.expanduser("~").split("/")[-1]
+    return reducers[user]
+
+def getUTC():
+    return time.strftime("%d/%m/%Y, %H:%M:%S", time.gmtime())

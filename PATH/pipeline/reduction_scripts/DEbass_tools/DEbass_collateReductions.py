@@ -27,18 +27,9 @@ def main(args):
     ObsPathReducedDir="%s/%s" % (SNpathReducedDir,obsDateDirName)
 
     # Retrieve the pipeline version and metadata version numbers
-    # This is fragile. The code will fail if it is run from the wrong directory
-    cwd=os.getcwd()
-    if args.metadataVersion is None:
-        metaDataVersion=cwd[-3:]
-    else:
-        metaDataVersion=args.metadataVersion
-    if args.pipelineVersion is None:
-        pipelineVersion=cwd[-7:-4]
-    else:
-        pipelineVersion=args.pipelineVersion
-        
-#    print(metaDataVersion,pipelineVersion)
+    pipelineVersion=DEbass.getPipelineVersion()
+    # Fragile code - depends on CWD
+    metaDataVersion=DEbass.getMetadataVersion()
 
 
     # Create the data structure
@@ -74,7 +65,8 @@ def main(args):
     checkObjectName(inputBlue,args.SNname)
     
     # Copy across the extracted and spliced data
-    # The extracted and spliced data will have the form *p12_ID.fits where ID could be anything, but is generally SN, host, AGN or nothing
+    # The extracted and spliced data will have the form *p12_ID.fits where ID could be anything,
+    # but is generally SN, host, AGN or nothing
     # Search for all files containing the string args.blueArm
 
     stub = args.blueArm.replace('T2m3wb','T2m3ws').replace('.p11.fits','')

@@ -18,6 +18,10 @@ all_files = os.listdir(data_dir)
 blue_obs = []
 red_obs = []
 obs_date = None
+
+# Sort the files
+all_files.sort()
+
 for fn in all_files:
     obs = fn.replace('.fits', '')
     if obs_date == None:

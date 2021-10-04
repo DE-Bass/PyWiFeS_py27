@@ -10,6 +10,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.widgets import RectangleSelector
 from matplotlib.patches import Rectangle
+import DEbass_Library as DEbass
 
 # Globals 
 
@@ -221,7 +222,40 @@ def writeFITS(sci,var,output,sci_header,var_header):
     
     return
 
+def updateHeader(args):
+
+    version=DEbass.getPipelineVersion()
+    metaData=DEbass.getMetadataVersion()
+
+    if args.reducedBy is None:
+        reducedBy=DEbass.setName()
+    else:
+        reducedBy=args.reducedBy
+
+    redDate=DEbass.getUTC()
+        
+    # Update red arm
+    red=fits.open(args.redArm,mode='update')
+    red[0].header['REDUCBY']=reducedBy
+    red[0].header['REDDATE']=redDate
+    red[0].header['PIPELINE']=version
+    red[0].header['METADATA']=metaData
+    red.close()
+
+    # Update blue arm
+    blue=fits.open(args.blueArm,mode='update')
+    blue[0].header['REDUCBY']=reducedBy
+    blue[0].header['REDDATE']=redDate
+    blue[0].header['PIPELINE']=version
+    blue[0].header['METADATA']=metaData
+    blue.close()
+    
+    return
+
 def main(args):
+    # Update the FITS header with inofmrationon who processed the data an with which version
+    updateHeader(args)
+    
     # Load in the data
 
     b_sci,b_sci_hdr=fits.getdata(args.blueArm,0,header=True)
@@ -262,8 +296,6 @@ def main(args):
     blueOutput=args.blueArm.replace('p11.fits','p12_%s.fits' % (args.suffix))
     redOutput=args.redArm.replace('p11.fits','p12_%s.fits' % (args.suffix))
 
-    print(blueOutput) 
-    
     writeFITS(b_fl,b_var,blueOutput,b_sci_hdr,b_var_hdr)
     writeFITS(r_fl,r_var,redOutput,r_sci_hdr,r_var_hdr)
     
@@ -285,6 +317,10 @@ if __name__ == "__main__":
     parser.add_argument('--suffix', dest='suffix',
                         default='SN',
                         help='Suffix')
+
+    parser.add_argument('--reducedBy', dest='reducedBy',
+                        default=None,
+                        help='Person who processed the data')
 
     parser.add_argument('--aperture', dest='aperture',
                         default=None,
