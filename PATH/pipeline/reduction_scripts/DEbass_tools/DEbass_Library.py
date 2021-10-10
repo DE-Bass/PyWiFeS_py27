@@ -52,9 +52,15 @@ def getMetadataVersion():
         return metaDataVersion
 
 def setName():
-    #Sets the observer name based on the user name
+    #Sets the reducer name based on the user name
     user=os.path.expanduser("~").split("/")[-1]
     return reducers[user]
 
 def getUTC():
     return time.strftime("%d/%m/%Y, %H:%M:%S", time.gmtime())
+
+def touch(fname):
+    if os.path.exists(fname):
+        os.utime(fname, None)
+    else:
+        open(fname, 'a').close()

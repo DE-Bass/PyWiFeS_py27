@@ -38,6 +38,7 @@ def main(args):
     CDELT1=fits.getval(inputFile,'CDELT1',0)
     NAXIS1=fits.getval(inputFile,'NAXIS1',0)
     reducedBy=fits.getval(inputFile,'REDUCBY',0)
+    observedBy=fits.getval(inputFile,'OBSERVBY',0)
     redDate=fits.getval(inputFile,'REDDATE',0)
     
     wavelength=CRVAL1+(np.arange(NAXIS1)+1.0-CRPIX1)*CDELT1
@@ -46,6 +47,7 @@ def main(args):
 
     f=open(outputFile,'w')
     # Write out header information
+    f.write("# Observed by %s\n" % (observedBy))
     f.write("# Reduced by %s\n" % (reducedBy))
     f.write("# On %s\n" % (redDate))
     f.write("# Using DEbass pipeline: %s\n" % (pipelineVersion))

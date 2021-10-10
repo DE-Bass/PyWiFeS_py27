@@ -232,22 +232,46 @@ def updateHeader(args):
     else:
         reducedBy=args.reducedBy
 
+    if args.observedBy is None:
+        rawInput=raw_input("Enter the observer name if it is not %s, otherwise hit return " % reducedBy)
+        if rawInput!='':
+            observedBy=rawInput
+        else:
+            observedBy=reducedBy
+    else:
+        reducedBy=args.observedBy
+
     redDate=DEbass.getUTC()
+
+    if args.ToO is not None:
+        ToO=True
+        ToOTime = args.ToO
+    else:
+        ToO=False
         
     # Update red arm
     red=fits.open(args.redArm,mode='update')
     red[0].header['REDUCBY']=reducedBy
+    red[0].header['OBSERVBY']=observedBy
     red[0].header['REDDATE']=redDate
     red[0].header['PIPELINE']=version
     red[0].header['METADATA']=metaData
+    red[0].header['TOO']=ToO
+    if ToO:
+        red[0].header['TOOTIME']=args.ToO
+        
     red.close()
 
     # Update blue arm
     blue=fits.open(args.blueArm,mode='update')
     blue[0].header['REDUCBY']=reducedBy
+    blue[0].header['OBSERVBY']=observedBy
     blue[0].header['REDDATE']=redDate
     blue[0].header['PIPELINE']=version
     blue[0].header['METADATA']=metaData
+    blue[0].header['TOO']=ToO
+    if ToO:
+        blue[0].header['TOOTIME']=args.ToO
     blue.close()
     
     return
@@ -322,6 +346,10 @@ if __name__ == "__main__":
                         default=None,
                         help='Person who processed the data')
 
+    parser.add_argument('--observedBy', dest='observedBy',
+                        default=None,
+                        help='Person who observed')
+
     parser.add_argument('--aperture', dest='aperture',
                         default=None,
                         help='Pre-defined aperture')
@@ -329,6 +357,12 @@ if __name__ == "__main__":
     parser.add_argument('--skySub', dest='skySub',
                         default=False, action='store_true',
                         help='Subtract Sky')
+
+    parser.add_argument('--ToO', dest='ToO',
+                        default=None,
+                        help='Time spent on ToO (minutes)')
+
+
     
     args = parser.parse_args()
 

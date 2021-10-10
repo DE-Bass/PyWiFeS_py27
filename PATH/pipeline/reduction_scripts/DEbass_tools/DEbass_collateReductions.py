@@ -16,15 +16,18 @@ def main(args):
     # Some important paths
     DEbassReducedDir=os.environ['DEBASSREDUCED']
     DEbassWorkingDir=os.environ['DEBASSWORKING']
+    DEbassAnalysisDir=os.environ['DEBASSANALYSIS']
 
     # Reduced directory path
     SNpathReducedDir="%s/%s" % (DEbassReducedDir,args.SNname)
+    SNpathAnalysisDir="%s/%s" % (DEbassAnalysisDir,args.SNname)
 
     # ObsPaths
     obsDate=DEbass.getObsDate(args.blueArm)
     obsDateDirName=DEbass.getObsDateDirName(args.blueArm)
     ObsPathWorkingDir="%s/%s" % (DEbassWorkingDir,obsDate)
     ObsPathReducedDir="%s/%s" % (SNpathReducedDir,obsDateDirName)
+    ObsPathAnalysisDir="%s/%s" % (SNpathAnalysisDir,obsDateDirName)
 
     # Retrieve the pipeline version and metadata version numbers
     pipelineVersion=DEbass.getPipelineVersion()
@@ -32,16 +35,31 @@ def main(args):
     metaDataVersion=DEbass.getMetadataVersion()
 
 
-    # Create the data structure
+    # Create the data structure - first for the reduced data, then for the analysis dir
     DEbass.makeDir(DEbassReducedDir)
     DEbass.makeDir(SNpathReducedDir)
     DEbass.makeDir(ObsPathReducedDir)
     DEbass.makeDir("%s/%s" %(ObsPathReducedDir,pipelineVersion))
     DEbass.makeDir("%s/%s/%s" %(ObsPathReducedDir,pipelineVersion,metaDataVersion))
 
+    DEbass.makeDir(DEbassAnalysisDir)
+    DEbass.makeDir(SNpathAnalysisDir)
+    DEbass.makeDir(ObsPathAnalysisDir)
+    DEbass.makeDir("%s/%s" %(ObsPathAnalysisDir,pipelineVersion))
+    DEbass.makeDir("%s/%s/%s" %(ObsPathAnalysisDir,pipelineVersion,metaDataVersion))
+
+    # Create subdirectories for Superfit, etc.
+    for technique in ['marz','superfit','snid', 'dash']:
+        DEbass.makeDir("%s/%s/%s/%s" %(ObsPathAnalysisDir,pipelineVersion,metaDataVersion,technique))
+    
+    # Create a comment file
+    DEbass.touch("%s/notes.txt" % SNpathAnalysisDir)
+        
+    
     # Copy aross the data
     origin="%s/%s/%s" % (ObsPathWorkingDir,pipelineVersion,metaDataVersion)
     destination="%s/%s/%s" % (ObsPathReducedDir,pipelineVersion,metaDataVersion)
+    analysisDestination="%s/%s/%s" % (ObsPathAnalysisDir,pipelineVersion,metaDataVersion)
 
     
     # Copy accross reduced data
@@ -76,6 +94,12 @@ def main(args):
             sh.copy(src="%s/reduc_s/%s" % \
                     (origin,f), dst=destination)
 
+    # Copy accross the extracted data for superfit
+    for f in dirContents:
+        if stub in f and 'dat' in f:
+            sh.copy(src="%s/reduc_s/%s" % \
+                    (origin,f), dst="%s/superfit/" % analysisDestination)
+            
     # Metadata
     sh.copy(src="%s/raw_data/save_blue_metadata.py" % (origin), dst=destination)
     sh.copy(src="%s/raw_data/save_red_metadata.py" % (origin), dst=destination)
