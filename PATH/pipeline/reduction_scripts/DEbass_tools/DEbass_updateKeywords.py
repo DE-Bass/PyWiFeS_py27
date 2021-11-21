@@ -6,6 +6,7 @@ import argparse
 import os
 import shutil as sh
 import astropy.io.fits as fits
+import numpy as np
 
 def main(args):
 
@@ -14,8 +15,8 @@ def main(args):
     DEbassAnalysisDir="%s/%s" % (os.environ['DEBASSANALYSIS'], args.SN)
 
     # Paths for the reduced direcrtories
-    # Since, we've only processed data with v01 using metdata m01, we harcode these"
-    redMetaDatatDir="%s/%s/v01/m01" % (DEbassReducedDir,args.dateDir)
+    # Since, we've only processed data with v01, we hardcoded this"
+    redMetaDatatDir="%s/%s/v01/%s" % (DEbassReducedDir,args.dateDir,args.metaData)
 
     # Create the directory in the analysis directory
     DEbass.makeDir(DEbassAnalysisDir)
@@ -27,7 +28,7 @@ def main(args):
     analVersionDir="%s/v01" % (analDateDir)
     DEbass.makeDir(analVersionDir)
     
-    analMetaDataDir="%s/m01" % (analVersionDir)
+    analMetaDataDir="%s/%s" % (analVersionDir,args.metaData)
     DEbass.makeDir(analMetaDataDir)
 
     # Make the snid, marz, snid, and superfit dirctories
@@ -43,6 +44,7 @@ def main(args):
         ToOTime = args.ToO
     else:
         ToO=False
+
  
     # Update the FITS files
     files=os.listdir(redMetaDatatDir)
@@ -54,12 +56,46 @@ def main(args):
             hdu[0].header['OBSERVBY']=args.observedBy
             hdu[0].header['REDDATE']=redDate
             hdu[0].header['PIPELINE']='v01'
-            hdu[0].header['METADATA']='m01'
+            hdu[0].header['METADATA']=args.metaData
             hdu[0].header['TOO']=ToO
             if ToO:
                 hdu[0].header['TOOTIME']=args.ToO
             hdu.close()
-        elif f[-4:]==".dat":
+            if args.createASCII and 'T2m3ws' in f:
+                # Only select the spliced spectrum
+                spectrum=fits.getdata(inputFile,0)
+                variance=fits.getdata(inputFile,1)
+                CRPIX1=fits.getval(inputFile,'CRPIX1',0)
+                CRVAL1=fits.getval(inputFile,'CRVAL1',0)
+                CDELT1=fits.getval(inputFile,'CDELT1',0)
+                NAXIS1=fits.getval(inputFile,'NAXIS1',0)
+                # Create the ASCII file
+                outputFile=open(inputFile.replace('.fits','.dat'),'w')
+                outputFile.write("# Observed by %s\n" % (args.observedBy))
+                outputFile.write("# Reduced by %s\n" % (args.reducedBy))
+                outputFile.write("# On %s\n" % (redDate))
+                outputFile.write("# Using DEbass pipeline: v01\n")
+                outputFile.write("# Using metadata: %s\n" % (args.metaData))
+                outputFile.write("#\n")
+                outputFile.write("# Wavelength Flux Error\n")
+                wavelength=CRVAL1+(np.arange(NAXIS1)+1.0-CRPIX1)*CDELT1
+                scaling=1e16
+
+                # Then the data
+    
+                for wave,flux,var in zip(wavelength,spectrum,variance):
+                    if np.isnan(var) or var < 0:
+                        pass
+                    else:
+                        outputFile.write("%7.2f\t%6.4e\t%6.4e\n" % (wave,flux*scaling,np.sqrt(var)*scaling+args.errFloor))
+    
+                outputFile.close()
+                # Copy it to the superfit directory
+            
+                sh.copy(inputFile.replace('.fits','.dat'), "%s/superfit/" % (analMetaDataDir))
+
+
+        elif f[-4:]==".dat" and not args.createASCII:
             # Update the data file
             # Write out header information
             inputFile="%s/%s" % (redMetaDatatDir,f)
@@ -113,9 +149,19 @@ if __name__ == '__main__':
                         default=None,
                         help='Person who observed')
 
+    parser.add_argument('--metaData', dest='metaData',
+                        default='m01',
+                        help='metaData')
+
     parser.add_argument('--ToO', dest='ToO',
                         default=None,
                         help='Time spent on ToO (minutes)')
+
+    parser.add_argument('--createASCII', dest='createASCII',
+                        default=False,action= 'store_true',
+                        help='Time spent on ToO (minutes)')
+
+    parser.add_argument("--errFloor", dest="errFloor",default=0.1, help="errFloor")
 
     args=parser.parse_args()
 
