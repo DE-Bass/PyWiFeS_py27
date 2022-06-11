@@ -1,4 +1,6 @@
-#!/usr/bin/env python
+#!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
+# Replaces
+#/usr/bin/env python2 
 
 """
 DEbass -- Extracting data from PyFiWeS cubes

@@ -1,4 +1,5 @@
-#!/pkg/linux/anaconda/bin/python
+#/usr/bin/env python2
+#!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
 
 import DEbass_Library as DEbass
 import argparse

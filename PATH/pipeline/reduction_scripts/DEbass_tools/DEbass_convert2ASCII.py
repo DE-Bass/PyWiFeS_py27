@@ -1,4 +1,4 @@
-#!/pkg/linux/anaconda/bin/python
+#!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
 # Convert the SN specrtum to ASCII to be used with superfit
 
 import DEbass_Library as DEbass

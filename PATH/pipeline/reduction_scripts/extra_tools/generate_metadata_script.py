@@ -1,9 +1,13 @@
-#! /usr/bin/env python
+#!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
 
 import sys
+
+print("User Current Version:-", sys.version)
+
 import os
 from astropy.io import fits as pyfits
 import wifes_calib
+
 
 stdstar_list = wifes_calib.ref_fname_lookup.keys()
 

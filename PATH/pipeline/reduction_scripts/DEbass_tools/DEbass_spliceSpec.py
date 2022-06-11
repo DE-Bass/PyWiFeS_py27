@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
 
 """
 DEbass -- Splicing the red and blue ends of WiFeS data
