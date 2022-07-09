@@ -56,11 +56,14 @@ def main(args):
     # Create data with logical links to the raw data
     DEbassRawData=os.environ['DEBASSRAW']        
 
+
     for f in fileList:
         inputDir='%s/%s' % (DEbassRawData,DEbass.getObsDate(f))
+        #print(inputDir,outputDir)
 
         try:
             os.symlink('%s/%s.fits' % (inputDir,f), '%s/%s.fits' % (outputDir,f))
+            #print('%s/%s.fits' % (inputDir,f), '%s/%s.fits' % (outputDir,f))
             print("INFO: Creating logical link for file %s" % f)
         except OSError:
             print("INFO: Logical link exists for file %s" % f)

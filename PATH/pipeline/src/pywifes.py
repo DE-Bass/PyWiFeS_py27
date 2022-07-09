@@ -60,7 +60,9 @@ def single_centroid_prof_fit(y,
 # high-level functions to check if an observation is half-frame or N+S
 def is_halfframe(inimg, data_hdu=0):
     f = pyfits.open(inimg)
+    # Adjusted for new headers
     ccdsec = f[data_hdu].header['CCDSEC']
+    #ccdsec = f[data_hdu].header['DETSEC']
     f.close()
     ystart = int(float(ccdsec.split(',')[1].split(':')[0]))
     if ystart > 2000:
@@ -728,8 +730,8 @@ def subtract_overscan(inimg, outimg,
     detsize_str = '[%d:%d,%d:%d]' % (1, ny, 1, nx)
     outfits[data_hdu].header.set('DETSIZE', detsize_str)
     outfits[data_hdu].header.set('CCDSIZE', detsize_str)
-    #outfits[data_hdu].header.set('CCDSEC',  detsize_str)
-    outfits[data_hdu].header.set('DATASEC', detsize_str)
+    outfits[data_hdu].header.set('CCDSEC',  detsize_str)
+    #outfits[data_hdu].header.set('DATASEC', detsize_str)
     outfits[data_hdu].header.set('TRIMSEC', detsize_str)
     outfits[data_hdu].header.set('RDNOISE', max(rdnoise))
     outfits[data_hdu].header.set('GAIN', 1.0)
@@ -1249,7 +1251,8 @@ def derive_slitlet_profiles(flatfield_fn,
                             bin_x=None,
                             bin_y=None):
     f = pyfits.open(flatfield_fn)
-    print(f[data_hdu].header['FILENAME'])
+    # Commented the following command out
+    # print(f[data_hdu].header['FILENAME'])
     flat_data = f[data_hdu].data
     orig_hdr = f[data_hdu].header
     f.close()
@@ -1803,7 +1806,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         obj_hdu.header.set('DATASEC', obj_dim_str)
         obj_hdu.header.set('TRIMSEC', obj_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+#        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         obj_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_obj.append(obj_hdu)
@@ -1833,7 +1837,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         sky_hdu.header.set('DATASEC', sky_dim_str)
         sky_hdu.header.set('TRIMSEC', sky_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+#        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         sky_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_sky.append(sky_hdu)
@@ -1887,7 +1892,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         obj_hdu.header.set('DATASEC', obj_dim_str)
         obj_hdu.header.set('TRIMSEC', obj_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+#        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         obj_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_obj.append(obj_hdu)
@@ -1918,7 +1924,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         sky_hdu.header.set('DATASEC', sky_dim_str)
         sky_hdu.header.set('TRIMSEC', sky_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+#        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         sky_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_sky.append(sky_hdu)
@@ -1972,7 +1979,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         obj_hdu.header.set('DATASEC', obj_dim_str)
         obj_hdu.header.set('TRIMSEC', obj_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+#        exptime_true = float(old_hdr['SEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         obj_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_obj.append(obj_hdu)
@@ -1984,7 +1992,8 @@ def wifes_slitlet_mef_ns(inimg, outimg_obj, outimg_sky,
         sky_hdu.header.set('DATASEC', sky_dim_str)
         sky_hdu.header.set('TRIMSEC', sky_dim_str)
         # fix the exposure time!!
-        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+##        exptime_true = float(old_hdr['NEXP'])*float(old_hdr['NSUBEXPS'])
+        exptime_true = float(old_hdr['EXPTIME'])
         sky_hdu.header.set('EXPTIME', exptime_true,
                               comment='Total NS exposure time')
         outfits_sky.append(sky_hdu)

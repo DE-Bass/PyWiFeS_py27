@@ -13,9 +13,9 @@ def main(args):
     DEbassWorkingDir=os.environ['DEBASSWORKING']
 
     # ObsPaths
-    obsDate=DEbass.getObsDate(args.inputSpectrum)
-    obsDateDirName=DEbass.getObsDateDirName(args.inputSpectrum)
-    ObsPathWorkingDir="%s/%s" % (DEbassWorkingDir,obsDate)
+    # obsDate=DEbass.getObsDate(args.inputSpectrum)
+    #obsDateDirName=DEbass.getObsDateDirName(args.inputSpectrum)
+    #ObsPathWorkingDir="%s/%s" % (DEbassWorkingDir,obsDate)
     pipelineVersion=DEbass.getPipelineVersion()
     # Fragile code - depends on CWD
     

@@ -29,11 +29,18 @@ def makeDir(dir):
 
 def getObsDateDirName(inputFile):
     dirName="%s%s%sT%s:%s" % (inputFile[7:11],months[inputFile[11:13]],inputFile[13:15],inputFile[16:18],inputFile[18:20])
+    #Adjusted for the new pipeline naming convention
+    #index=inputFile.find("UT")
+    #dirName="%s%s%sT%s:%s" % (inputFile[index+2:index+6],months[inputFile[index+6:index+8]],inputFile[index+8:index+10],inputFile[index+11:index+13],inputFile[index+13:index+15])
 
     return dirName
 
 def getObsDate(inputFile):
     dirName="%s" % (inputFile[7:15])
+    #Adjusted for the new pipeline naming convention
+    #index=inputFile.find("UT")
+    #dirName="%s" % (inputFile[index+2:index+10])
+
 
     return dirName
 

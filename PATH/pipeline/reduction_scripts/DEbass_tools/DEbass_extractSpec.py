@@ -13,7 +13,6 @@ import matplotlib.pyplot as plt
 from matplotlib.widgets import RectangleSelector
 from matplotlib.patches import Rectangle
 import DEbass_Library as DEbass
-
 # Globals 
 
 version_tag = "v01"
@@ -21,6 +20,9 @@ start = [None, None]
 end = [None, None]
 
 # v01 - Modified version Harry's extract.py code
+
+def mad(x):
+    return np.median(np.abs(x-np.median(x)))
 
 def aveImage(*datacubes):
     '''
@@ -74,9 +76,11 @@ def toggle_selector(event):
 def select_spaxel(data, rect=None, width=1, height=1, title=''):
 	#Set sensible colourmap range based off average values across image
 	ave = np.mean(data)
+        mad = np.abs(np.median(data))
         
 	#Clip within an order of mag of average
-	data = np.clip(data, ave/5, ave*5)
+	#data = np.clip(data, ave/5, ave*5)
+	data = np.clip(data,-5*mad, 5*mad)
 
 	#Show image
 	fig, ax = plt.subplots()

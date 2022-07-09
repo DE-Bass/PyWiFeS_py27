@@ -1077,7 +1077,9 @@ def derive_wifes_polynomial_wave_solution(inimg,
         else:
             grating = arc_hdr['GRATINGB']
     if arc_name == None:
+        # Modified for the automation project
         init_arc_name = arc_hdr['M1ARCLMP']
+        #init_arc_name = arc_hdr['LAMP']
         next_arc_name = re.sub('-', '', init_arc_name)
         again_arc_name = re.sub(' ', '', next_arc_name)
         arc_name = re.sub('_', '', again_arc_name)
@@ -1162,6 +1164,7 @@ def save_found_lines(inimg,
             grating = arc_hdr['GRATINGB']
     if arc_name == None:
         init_arc_name = arc_hdr['M1ARCLMP']
+        #init_arc_name = arc_hdr['LAMP']
         next_arc_name = re.sub('-', '', init_arc_name)
         again_arc_name = re.sub(' ', '', next_arc_name)
         arc_name = re.sub('_', '', again_arc_name)
@@ -1505,6 +1508,7 @@ def derive_wifes_optical_wave_solution(inimg,
   rma = f[1].header.get('ROTSKYPA') # Dumb name for rotator mechanical angle
   if arc_name == None:
       init_arc_name = f[1].header['M1ARCLMP']
+#      init_arc_name = f[1].header['LAMP']
       next_arc_name = re.sub('-', '', init_arc_name)
       again_arc_name = re.sub(' ', '', next_arc_name)
       arc_name = re.sub('_', '', again_arc_name)
