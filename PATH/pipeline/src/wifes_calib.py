@@ -429,7 +429,7 @@ def derive_wifes_calibration(cube_fn_list,
     print "cube_fn_list =", cube_fn_list
     for i in range(len(cube_fn_list)):
         f = pyfits.open(cube_fn_list[i])
-        cube_hdr = f[1].header
+        cube_hdr = f[0].header
         f.close()
         #------------------------------------
         # figure out which star it is
@@ -447,7 +447,6 @@ def derive_wifes_calibration(cube_fn_list,
           #############=================================================#############
           #############=================================================#############
         # try to find the nearest standard in the list
-        print(cube_hdr['OBJECT'])
           #############=================================================#############
           #############=================================================#############
         if star_name == None:
