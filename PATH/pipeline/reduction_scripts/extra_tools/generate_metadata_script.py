@@ -262,8 +262,8 @@ for obs in red_obs:
         pass
     #---------------------------
     # 1 - bias frames
-#    if imagetype == 'ZERO':
-    if imagetype == 'BIAS':
+    if imagetype == 'ZERO':
+#    if imagetype == 'BIAS':
         red_bias.append(obs)
     # 2 - quartz flats
     if imagetype == 'FLAT':

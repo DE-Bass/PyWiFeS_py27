@@ -80,7 +80,12 @@ def select_spaxel(data, rect=None, width=1, height=1, title=''):
         
 	#Clip within an order of mag of average
 	#data = np.clip(data, ave/5, ave*5)
-	data = np.clip(data,-5*mad, 5*mad)
+        scale="bright"
+        scale="faint"
+        if scale=="bright":
+            data = np.clip(data,-5*mad, 50*mad)
+        else:
+            data = np.clip(data,-5*mad, 5*mad)
 
 	#Show image
 	fig, ax = plt.subplots()
@@ -300,15 +305,14 @@ def main(args):
     #ave_image = aveImage(r_sci, b_sci)
     ave_image = aveImage(r_sci)
 
-    obj_x, obj_y = select_spaxel(ave_image, title='Select Object spaxels to coadd',)
+    obj_x, obj_y = select_spaxel(ave_image, title='Select Object spaxels to coadd')
 
 
     if args.skySub:
         sub_x, sub_y = select_spaxel(ave_image, title='Select sky spaxels to subtract',
                                      rect  = (obj_x['start'], obj_y['start']),
                                      width =  obj_x['end']-obj_x['start'],
-                                     height=  obj_y['end']-obj_y['start'],
-                                     )
+                                     height=  obj_y['end']-obj_y['start'])
     else:
         sub_x=None
         sub_y=None
@@ -368,6 +372,9 @@ if __name__ == "__main__":
                         default=None,
                         help='Time spent on ToO (minutes)')
 
+    parser.add_argument('--scale', dest='scale',
+                        default=None,
+                        help='Scaling option')
 
     
     args = parser.parse_args()
