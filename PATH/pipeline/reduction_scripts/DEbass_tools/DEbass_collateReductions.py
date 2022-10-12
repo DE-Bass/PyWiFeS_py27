@@ -87,7 +87,8 @@ def main(args):
     # but is generally SN, host, AGN or nothing
     # Search for all files containing the string args.blueArm
 
-    stub = args.blueArm.replace('T2m3wb','T2m3ws').replace('.p11.fits','')
+#    stub = args.blueArm.replace('T2m3wb','T2m3ws').replace('.p11.fits','')
+    stub = args.blueArm.replace('Blue','Splice').replace('.p11.fits','')
     dirContents=os.listdir("%s/reduc_s" % origin)
     for f in dirContents:
         if stub in f:

@@ -242,7 +242,7 @@ def main(args):
     # The 's' stands for spliced
     DEbass.makeDir('reduc_s')
 
-    output=args.blueArm.replace('reduc_b/T2m3wb','reduc_s/T2m3ws')
+    output=args.blueArm.replace('reduc_b/','reduc_s/').replace('Blue','Splice')
     
     hdulist.writeto(output,overwrite=True)
     hdulist.close()

@@ -58,10 +58,10 @@ def main(args):
 
     for f in fileList:
         inputDir='%s/%s' % (DEbassRawData,DEbass.getObsDate(f))
-
         try:
             os.symlink('%s/%s.fits' % (inputDir,f), '%s/%s.fits' % (outputDir,f))
             print("INFO: Creating logical link for file %s" % f)
+            #print(inputDir,f,outputDir)
         except OSError:
             print("INFO: Logical link exists for file %s" % f)
 
