@@ -347,9 +347,11 @@ def scaled_imarith_mef(inimg1, operator, inimg2, outimg,
     if type(scale) == type(1.0):
         scale_factor = scale
     elif scale == 'exptime':
-        exptime1 = f1[1].header['EXPTIME']
-        exptime2 = f2[1].header['EXPTIME']
-        scale_factor = exptime1/exptime2
+        oexptime = f1[1].header['EXPTIME']
+        sexptime = f2[1].header['SEXPTIME']
+        print("Exposure times for object %4.1fs and sky %4.1fs" % (oexptime,sexptime))
+        scale_factor = oexptime/sexptime
+        print("Setting scale factor to %4.3f" % scale_factor)
     else:
         scale_factor = 1.0
     # PART 1 - data HDUs

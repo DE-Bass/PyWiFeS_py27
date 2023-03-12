@@ -71,12 +71,13 @@ def toggle_selector(event):
 
 
 #Show plot for user selections
-def select_spaxel(data, rect=None, width=1, height=1, title=''):
+def select_spaxel(data, args, rect=None, width=1, height=1, title=''):
 	#Set sensible colourmap range based off average values across image
 	ave = np.mean(data)
+        mad=np.abs(np.median(data))
         
-	#Clip within an order of mag of average
-	data = np.clip(data, ave/5, ave*5)
+        data = np.clip(data, -5*mad, mad*args.scale)
+
 
 	#Show image
 	fig, ax = plt.subplots()
@@ -296,11 +297,11 @@ def main(args):
     #ave_image = aveImage(r_sci, b_sci)
     ave_image = aveImage(r_sci)
 
-    obj_x, obj_y = select_spaxel(ave_image, title='Select Object spaxels to coadd',)
+    obj_x, obj_y = select_spaxel(ave_image, args, title='Select Object spaxels to coadd')
 
 
     if args.skySub:
-        sub_x, sub_y = select_spaxel(ave_image, title='Select sky spaxels to subtract',
+        sub_x, sub_y = select_spaxel(ave_image, args, title='Select sky spaxels to subtract',
                                      rect  = (obj_x['start'], obj_y['start']),
                                      width =  obj_x['end']-obj_x['start'],
                                      height=  obj_y['end']-obj_y['start'],
@@ -343,6 +344,10 @@ if __name__ == "__main__":
     parser.add_argument('--suffix', dest='suffix',
                         default='SN',
                         help='Suffix')
+
+    parser.add_argument('--scale', dest='scale',
+                        default=50, type=int,
+                        help='scale')
 
     parser.add_argument('--reducedBy', dest='reducedBy',
                         default=None,

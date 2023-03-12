@@ -73,7 +73,12 @@ for obs in blue_obs:
     fn = data_dir+obs+'.fits'
     f = pyfits.open(fn)
     imagetype = f[0].header['IMAGETYP'].upper()
-    obj_name = f[0].header['OBJECT']
+    ## Added CLi 20230308
+    if imagetype=="STANDARD":
+        obj_name=f[0].header['STANDARD']
+    else:
+        obj_name = f[0].header['OBJECT']
+    ##
     f.close()
     #---------------------------
     # check if it is within a close distance to a standard star
@@ -81,6 +86,7 @@ for obs in blue_obs:
     try:
         near_std, std_dist = wifes_calib.find_nearest_stdstar(fn)
         if std_dist < 100.0:
+            print(obj_namnear_std)
             obj_name = near_std
     except:
         pass
@@ -105,7 +111,8 @@ for obs in blue_obs:
     if imagetype == 'WIRE':
         blue_wire.append(obs)
     # all else are science targets
-    if imagetype == 'OBJECT':
+    ## CLi 20230308
+    if imagetype == 'OBJECT' or imagetype=='STANDARD':
         if obj_name in stdstar_list:
             # group standard obs together!
             if obj_name in blue_stdstar.keys():
@@ -248,7 +255,12 @@ for obs in red_obs:
     fn = data_dir+obs+'.fits'
     f = pyfits.open(fn)
     imagetype = f[0].header['IMAGETYP'].upper()
-    obj_name = f[0].header['OBJECT']
+    ## Added CLi 20230308
+    if imagetype=="STANDARD":
+        obj_name=f[0].header['STANDARD']
+    else:
+        obj_name = f[0].header['OBJECT']
+    ##
     f.close()
     #---------------------------
     # check if it is within a close distance to a standard star
@@ -280,7 +292,9 @@ for obs in red_obs:
     if imagetype == 'WIRE':
         red_wire.append(obs)
     # all else are science targets
-    if imagetype == 'OBJECT':
+    ## CLi 20230308
+    if imagetype == 'OBJECT' or imagetype=='STANDARD':
+    ##
         if obj_name in stdstar_list:
             # group standard obs together!
             if obj_name in red_stdstar.keys():
