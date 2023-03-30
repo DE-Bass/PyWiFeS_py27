@@ -236,7 +236,7 @@ def updateHeader(args):
         reducedBy=args.reducedBy
 
     if args.observedBy is None:
-        rawInput=raw_input("Enter the observer name if it is not %s, otherwise hit return " % reducedBy)
+        rawInput=raw_input("Enter the name of the person that preparared the observations, if it is not %s, otherwise hit return " % reducedBy)
         if rawInput!='':
             observedBy=rawInput
         else:

@@ -446,7 +446,7 @@ def derive_wifes_calibration(cube_fn_list,
           #############=================================================#############
           #############=================================================#############
         # try to find the nearest standard in the list
-        print(cube_hdr['OBJECT'])
+        print(cube_hdr['STANDARD'])
           #############=================================================#############
           #############=================================================#############
         if star_name == None:
@@ -456,13 +456,13 @@ def derive_wifes_calibration(cube_fn_list,
           #############=================================================#############
           #############=================================================#############
                     # star_name = None
-                    star_name = cube_hdr['OBJECT']
+                    star_name = cube_hdr['STANDARD']
           #############=================================================#############
           #############=================================================#############
             except:
                 # last resort: use the object name from the fits header
                 # and pray it's correct
-                star_name = cube_hdr['OBJECT']
+                star_name = cube_hdr['STANDARD']
         #------------------------------------
         print "Found star", star_name
         if airmass_list != None:
