@@ -32,7 +32,7 @@ def makeDir(dir):
 def getObsDateDirName(inputFile):
 #    dirName="%s%s%sT%s:%s" % (inputFile[7:11],months[inputFile[11:13]],inputFile[13:15],inputFile[16:18],inputFile[18:20])
     UT=inputFile.find("UT")
-    dirName="%s%s%sT%s:%s" % (inputFile[UT+2:UT+6],months[inputFile[UT+6:UT+8]],inputFile[UT+8:UT+10],inputFile[UT+11:UT+13],inputFile[UT+12:UT+14])
+    dirName="%s%s%sT%s:%s" % (inputFile[UT+2:UT+6],months[inputFile[UT+6:UT+8]],inputFile[UT+8:UT+10],inputFile[UT+11:UT+13],inputFile[UT+13:UT+15])
 
     return dirName
 
