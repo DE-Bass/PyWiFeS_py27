@@ -613,6 +613,15 @@ def run_sky_sub_std(std_proc_list, prev_suffix, curr_suffix):
 
     return
 
+def run_sky_sub_no_offset(no_offset_proc_list, prev_suffix, curr_suffix):
+    for fn in no_offset_proc_list:
+        in_fn  = '%s%s.p%s.fits' % (out_dir, fn, prev_suffix)
+        out_fn = '%s%s.p%s.fits' % (out_dir, fn, curr_suffix)
+        print 'Copying image %s' % in_fn.split('/')[-1]
+        pywifes.imcopy(in_fn, out_fn)
+
+    return
+
 def run_sky_sub_offet(offset_proc_list, prev_suffix, curr_suffix):
     # Code needs to be written
 
@@ -631,13 +640,18 @@ def run_sky_sub(metadata, prev_suffix, curr_suffix):
     sci_obs_list = get_sci_obs_list(metadata)
     ns_proc_list = []
     offset_proc_list = []
+    no_offset_proc_list = []
     std_proc_list = []
 
     for obs in sci_obs_list:
         if pyfits.getval('raw_data/%s.fits' % obs,'WIFESOBS',0) == 'NodAndShuffle':
             ns_proc_list+=[obs]
-        else:
+        elif hasOffsetSky(obs,metadata['sci']):
+            # A bit of a hack - needs to be refactored
             offset_proc_list+=[obs]
+        else: 
+            # No offset sky
+            no_offset_proc_list+=[obs]
 
     # The standard may have been observed with either nod-and-shuffle or classical unequal
     for obs in std_obs_list:
@@ -646,10 +660,12 @@ def run_sky_sub(metadata, prev_suffix, curr_suffix):
         else:
             std_proc_list+=[obs]
 
-
     if len(ns_proc_list) > 0:
         # Process the nod and shuffle frames, if there are any
         run_sky_sub_ns(ns_proc_list, prev_suffix, curr_suffix)
+
+    if len(no_offset_proc_list) > 0:
+        run_sky_sub_no_offset(no_offset_proc_list, prev_suffix, curr_suffix)
 
     # Process standard star frames
     # By default, stadard star frames do not have an offset sky

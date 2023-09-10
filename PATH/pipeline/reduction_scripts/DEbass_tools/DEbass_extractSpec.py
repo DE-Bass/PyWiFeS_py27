@@ -14,6 +14,15 @@ from matplotlib.widgets import RectangleSelector
 from matplotlib.patches import Rectangle
 import DEbass_Library as DEbass
 
+
+import matplotlib as mp
+#matplotlib.use('agg')
+#print(mp.get_backend())
+#plt.switch_backend('Qt5Agg')
+#print(mp.get_backend())
+
+
+
 # Globals 
 
 version_tag = "v01"
@@ -242,7 +251,7 @@ def updateHeader(args):
         else:
             observedBy=reducedBy
     else:
-        reducedBy=args.observedBy
+        observedBy=args.observedBy
 
     redDate=DEbass.getUTC()
 

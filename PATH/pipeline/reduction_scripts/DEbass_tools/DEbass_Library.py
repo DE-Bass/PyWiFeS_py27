@@ -16,8 +16,11 @@ months={"01":"Jan",
         "12":"Dec"}
 
 reducers={"clidman":"C. Lidman",
-          "bmartin":"B: Martin",
-          "irobot": "I Robot"}
+          "bmartin":"B. Martin",
+          "irobot": "I Robot",
+          "kokodove": "K. Dove",
+          "brad": "B. E. Tucker",
+          "katie": "K. Auchettl"}
 
 
 def makeDir(dir):
