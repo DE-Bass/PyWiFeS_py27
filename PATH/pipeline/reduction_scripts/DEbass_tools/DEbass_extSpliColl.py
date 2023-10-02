@@ -45,14 +45,17 @@ def main(args):
                         
     # Then the host
     # Need to ask if a host is to be extracted.
-    args_extract.suffix="host"
-    # Extract
-    extract.main(args_extract)
-
-    # Splice the host
-    args_splice.blueArm=args.blueArm.replace("p11.fits","p12_host.fits")
-    args_splice.redArm=args.redArm.replace("p11.fits","p12_host.fits")
-    splice.main(args_splice)
+    rawInput=raw_input("Type Y if you want to also extract the host galaxy. Otherwise hit return: ")
+    if rawInput=='':
+        pass
+    else:
+        args_extract.suffix="host"
+        # Extract
+        extract.main(args_extract)
+        # Splice the host
+        args_splice.blueArm=args.blueArm.replace("p11.fits","p12_host.fits")
+        args_splice.redArm=args.redArm.replace("p11.fits","p12_host.fits")
+        splice.main(args_splice)
 
     # Collate the results
     args_collate=copy.copy(args)    
@@ -76,16 +79,20 @@ if __name__ == "__main__":
                         help='Red arm of WiFeS')
 
     parser.add_argument('--scale', dest='scale',
-                        default=50, type=int,
+                        default=20, type=int,
                         help='scale')
 
     parser.add_argument('--reducedBy', dest='reducedBy',
                         default=None,
                         help='Person who processed the data')
 
-    parser.add_argument('--observedBy', dest='observedBy',
+    parser.add_argument('--submittedBy', dest='observedBy',
                         default=None,
                         help='Person who observed')
+
+    parser.add_argument('--metadataVersion', dest='metadataVersion',
+                        default='m01',
+                        help='The verson of the metadata used to process the data')
 
     parser.add_argument('--skySub', dest='skySub',
                         default=False, action='store_true',

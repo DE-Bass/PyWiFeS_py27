@@ -20,7 +20,7 @@ reducers={"clidman":"C. Lidman",
           "irobot": "I Robot",
           "kokodove": "K. Dove",
           "brad": "B. E. Tucker",
-          "katie": "K. Auchettl"}
+          "kauchett": "K. Auchettl"}
 
 
 def makeDir(dir):

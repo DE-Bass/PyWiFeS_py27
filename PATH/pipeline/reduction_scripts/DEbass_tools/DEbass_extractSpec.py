@@ -83,9 +83,12 @@ def toggle_selector(event):
 def select_spaxel(data, args, rect=None, width=1, height=1, title=''):
 	#Set sensible colourmap range based off average values across image
 	ave = np.mean(data)
-        mad=np.abs(np.median(data))
-        
-        data = np.clip(data, -5*mad, mad*args.scale)
+	med = np.median(data)
+        mad=np.median(np.abs(data-med))
+
+        print("Median and MAD of image are %4.2e %4.2e" % (med,mad)) 
+
+        data = np.clip(data, med-5*mad, med+mad*args.scale)
 
 
 	#Show image
@@ -149,13 +152,12 @@ def calcFlux(sci, var, obj_x, obj_y, sub_x, sub_y, skySub):
     obj_sci = sci[:, obj_y['start']:obj_y['end'], obj_x['start']:obj_x['end']]
     obj_var = var[:, obj_y['start']:obj_y['end'], obj_x['start']:obj_x['end']]
 
+
     #Extracts average spectrum in section to subtract
     if skySub:
         sub_sci  = sci[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
         sub_var  = var[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
 
-    #Calculates the weighted average spectrum across selection range
-        
         fl = [
             np.average(obj_sci[i], weights=np.reciprocal(obj_var[i])) - 
             np.average(sub_sci[i], weights=np.reciprocal(sub_var[i])) 
@@ -171,7 +173,10 @@ def calcFlux(sci, var, obj_x, obj_y, sub_x, sub_y, skySub):
 
 
     area=(obj_y['end']-obj_y['start'])*(obj_x['end']-obj_x['start'])
-    
+
+    # ToDo in v2
+    # Add the area of the extraction to the FITS header
+
     return np.array(fl) * area
 
 def calcVar(var, obj_x, obj_y, sub_x, sub_y, skySub):
@@ -237,8 +242,11 @@ def writeFITS(sci,var,output,sci_header,var_header):
 def updateHeader(args):
 
     version=DEbass.getPipelineVersion()
-    metaData=DEbass.getMetadataVersion()
-
+    if args.metadataVersion is None:
+        metaData=DEbass.getMetadataVersion()
+    else:
+        metaData=args.metadataVersion
+        
     if args.reducedBy is None:
         reducedBy=DEbass.setName()
     else:
@@ -319,6 +327,18 @@ def main(args):
         sub_x=None
         sub_y=None
 
+    # Give the user the option to not do skySubtraction
+    if args.skySub:
+        # Calculates the weighted average spectrum across selection range
+        # Give the user to skip sky subrtaction
+        b_sub_sci  = b_sci[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
+        r_sub_sci  = r_sci[:, sub_y['start']:sub_y['end'], sub_x['start']:sub_x['end']]
+
+        print("The mediian sky values (B/R) arms are %4.2e / %4.2e" % (np.median(b_sub_sci),np.median(r_sub_sci)))
+        rawInput=raw_input("Type N if you dor NOT wish to subtract sky. Otherwise hit return: ")
+        if rawInput=="N":
+            args.skySub=False
+
     # Calculate spectrum for selected values
     b_fl = calcFlux(b_sci, b_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
     b_var= calcVar(b_var, obj_x, obj_y, sub_x, sub_y, args.skySub)
@@ -358,13 +378,17 @@ if __name__ == "__main__":
                         default=50, type=int,
                         help='scale')
 
+    parser.add_argument('--metadataVersion', dest='metadataVersion',
+                        default='m01',
+                        help='The verson of the metadata used to process the data')
+
     parser.add_argument('--reducedBy', dest='reducedBy',
                         default=None,
                         help='Person who processed the data')
 
-    parser.add_argument('--observedBy', dest='observedBy',
+    parser.add_argument('--submittedBy', dest='observedBy',
                         default=None,
-                        help='Person who observed')
+                        help='Person who submitted the observing request')
 
     parser.add_argument('--aperture', dest='aperture',
                         default=None,

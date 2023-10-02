@@ -32,7 +32,10 @@ def main(args):
     # Retrieve the pipeline version and metadata version numbers
     pipelineVersion=DEbass.getPipelineVersion()
     # Fragile code - depends on CWD
-    metaDataVersion=DEbass.getMetadataVersion()
+    if args.metadataVersion is None:
+        metaDataVersion=DEbass.getMetadataVersion()
+    else:
+        metaDataVersion=args.metadataVersion
 
 
     # Create the data structure - first for the reduced data, then for the analysis dir
@@ -136,7 +139,7 @@ if __name__ == '__main__':
     parser.add_argument("--cleanup", dest="cleanup",default=False, action='store_true',
                         help="Remove the working directory")
 
-    parser.add_argument("--meta", dest="metadataVersion",default=None, help="Metadata version")
+    parser.add_argument("--metadataVersion", dest="metadataVersion",default='m01', help="Metadata version")
 
     parser.add_argument("--pipline", dest="pipelineVersion",default=None, help="Pipeline version")
 
