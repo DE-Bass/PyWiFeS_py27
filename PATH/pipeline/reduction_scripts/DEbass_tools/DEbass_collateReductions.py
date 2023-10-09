@@ -61,6 +61,8 @@ def main(args):
     
     # Copy aross the data
     origin="%s/%s/%s" % (ObsPathWorkingDir,pipelineVersion,metaDataVersion)
+    ## CLi
+    ##origin="/priv/debass/database/working/Anais/v01/m01"
     destination="%s/%s/%s" % (ObsPathReducedDir,pipelineVersion,metaDataVersion)
     analysisDestination="%s/%s/%s" % (ObsPathAnalysisDir,pipelineVersion,metaDataVersion)
 
@@ -110,6 +112,9 @@ def main(args):
 
     blueMetaDataFile="wifesB_%s_metadata.pkl" % (obsDate)
     redMetaDataFile="wifesR_%s_metadata.pkl" % (obsDate)
+    ## CLi
+    ##blueMetaDataFile="wifesB_%s_metadata.pkl" % ("20231006")
+    ##redMetaDataFile="wifesR_%s_metadata.pkl" % ("20231006")
     sh.copy(src="%s/raw_data/%s" % (origin,blueMetaDataFile), dst=destination)
     sh.copy(src="%s/raw_data/%s" % (origin,redMetaDataFile), dst=destination)
 
