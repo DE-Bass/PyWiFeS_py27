@@ -313,6 +313,7 @@ def main(args):
     # Generate an images for the user to see. We use the red arm
     #ave_image = aveImage(r_sci, b_sci)
     ave_image = aveImage(r_sci)
+#    ave_image = aveImage(b_sci)
 
     obj_x, obj_y = select_spaxel(ave_image, args, title='Select Object spaxels to coadd')
 

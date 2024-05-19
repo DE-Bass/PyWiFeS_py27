@@ -16,6 +16,7 @@ months={"01":"Jan",
         "12":"Dec"}
 
 reducers={"clidman":"C. Lidman",
+          "anais":"A. Moller",
           "bmartin":"B. Martin",
           "irobot": "I Robot",
           "kokodove": "K. Dove",

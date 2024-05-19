@@ -101,6 +101,9 @@ if __name__ == "__main__":
     parser.add_argument("--SN", dest="SNname",default=None, 
                         help="SN name")
 
+    parser.add_argument("--baseDir", dest="baseDir",default=None, 
+                        help="Directory where data is processed. Leave blank if using the date")
+
     parser.add_argument('--ToO', dest='ToO',
                         default=None,
                         help='Time spent on ToO (minutes)')

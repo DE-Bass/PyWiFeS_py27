@@ -23,7 +23,10 @@ def main(args):
     SNpathAnalysisDir="%s/%s" % (DEbassAnalysisDir,args.SNname)
 
     # ObsPaths
-    obsDate=DEbass.getObsDate(args.blueArm)
+    if args.baseDir is None:
+        obsDate=DEbass.getObsDate(args.blueArm)
+    else:
+        obsDate=args.baseDir
     obsDateDirName=DEbass.getObsDateDirName(args.blueArm)
     ObsPathWorkingDir="%s/%s" % (DEbassWorkingDir,obsDate)
     ObsPathReducedDir="%s/%s" % (SNpathReducedDir,obsDateDirName)
@@ -132,6 +135,9 @@ if __name__ == '__main__':
 
     parser.add_argument("--SN", dest="SNname",default=None, 
                         help="SN name")
+
+    parser.add_argument("--baseDir", dest="baseDir",default=None, 
+                        help="Directory where data is processed. Leave blank if using the date")
 
     parser.add_argument('--redArm', dest='redArm',
                         default=None,
