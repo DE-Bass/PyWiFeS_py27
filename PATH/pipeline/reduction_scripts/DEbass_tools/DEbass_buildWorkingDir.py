@@ -1,4 +1,4 @@
-#/usr/bin/env python2
+#/usr/bin/env python2.7
 #!/pkg/linux/anaconda-20191122/anaconda2/bin/python2
 
 import DEbass_Library as DEbass
