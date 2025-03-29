@@ -80,6 +80,7 @@ for obs in blue_obs:
         obj_name = f[0].header['OBJECT']
     ##
     f.close()
+#    print(obj_name,imagetype)
     #---------------------------
     # check if it is within a close distance to a standard star
     # if so, fix the object name to be the good one from the list!
@@ -88,6 +89,7 @@ for obs in blue_obs:
         if std_dist < 100.0:
             print(obj_namnear_std)
             obj_name = near_std
+            print(obj_name)
     except:
         pass
     #---------------------------

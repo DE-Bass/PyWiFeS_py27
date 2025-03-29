@@ -16,11 +16,14 @@ months={"01":"Jan",
         "12":"Dec"}
 
 reducers={"clidman":"C. Lidman",
+          "lrauf":"L. Rauf",
           "anais":"A. Moller",
           "bmartin":"B. Martin",
+          "bschmidt":"B. P. Schmidt",
           "irobot": "I Robot",
           "kokodove": "K. Dove",
           "brad": "B. E. Tucker",
+          "dingyuan": "D. Cao",
           "kauchett": "K. Auchettl"}
 
 
@@ -49,8 +52,7 @@ def getObsDate(inputFile):
 
 def getPipelineVersion():
     pipelineDir='%s/current' % (os.environ['DEBASSPIPELINE'])
-
-    return os.readlink(pipelineDir)
+    return os.path.split(os.readlink(pipelineDir))[1]
 
 def getMetadataVersion():
     # Assumes that one is in the correct directory
