@@ -98,6 +98,10 @@ if __name__ == "__main__":
                         default=False, action='store_true',
                         help='Subtract Sky')
 
+    parser.add_argument('--neg', dest='neg',
+                        default=False, action='store_true',
+                        help='Multiply cube by -1')
+
     parser.add_argument("--SN", dest="SNname",default=None, 
                         help="SN name")
 

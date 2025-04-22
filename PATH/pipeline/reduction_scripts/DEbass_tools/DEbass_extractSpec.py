@@ -310,6 +310,11 @@ def main(args):
     r_var,r_var_hdr=fits.getdata(args.redArm,1,header=True)
     r_dq,r_dq_hdr=fits.getdata(args.redArm,2,header=True)
 
+    if args.neg:
+        # Useful if the sky and object were flipped
+        b_sci*=-1
+        r_sci*=-1
+    
     # Generate an images for the user to see. We use the red arm
     #ave_image = aveImage(r_sci, b_sci)
     ave_image = aveImage(r_sci)
@@ -398,6 +403,10 @@ if __name__ == "__main__":
     parser.add_argument('--skySub', dest='skySub',
                         default=False, action='store_true',
                         help='Subtract Sky')
+
+    parser.add_argument('--neg', dest='neg',
+                        default=False, action='store_true',
+                        help='Multiply cube by -1')
 
     parser.add_argument('--ToO', dest='ToO',
                         default=None,
